@@ -1,0 +1,14 @@
+# 本地开发资产：不入库
+# _bak/ 含真实台账副本（含历史任务回报全文），绝不可公开
+_bak/
+_probes/
+
+# 运行时产物
+.orchestrator-loop/
+node_modules/
+
+# 杂项
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

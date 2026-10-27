@@ -1,0 +1,68 @@
+# dsh-orchestrator-loop bundle patch.
+#
+# This package is HOST-PLANE: it registers eleven `loop_*` tools on the host
+# tool registry and keeps a small JSON ledger under ~/.dsh/plugins/
+# orchestrator-loop/. It must therefore land in the host composition (this
+# insert), never inside an agent preset.
+#
+# `name` is the PACKAGE name (resolved through the profile's node_modules or the
+# dsh installation), not a relative path.
+#
+# Every config key is optional; delete a line to fall back to the built-in
+# default in the `DEFAULTS` table (src/common.js). Every value written below
+# mirrors that table key-for-key, so installing this patch is
+# behavior-preserving: if you change one side, change the other in the same
+# commit. (0.6.0 note: `reportKeepChars` used to say 2000 here while `DEFAULTS`
+# said 300 — the patch wins at runtime, so patch-installed profiles silently
+# missed the R1 report slimming. Realigned to 300 below.)
+
+- insert:
+    - id: orchestrator-loop
+      name: 'dsh-orchestrator-loop'
+      config:
+        # --- per-round quotas ---
+        # Subagent tasks allowed in one round. Over the cap loop_plan throws and
+        # names this key; split the round instead of raising it.
+        maxTasksPerRound: 3
+        # Tasks the MAIN agent may take itself (`assignee: 'self'`). Counted
+        # separately, so the default round is 3 subagents + 1 self = 4 in
+        # parallel. Set 0 to switch self-tasks off entirely.
+        maxSelfTasksPerRound: 1
+
+        # --- report retention ---
+        # Characters of a report kept inline on the task. The whole original is
+        # always written to `report_file`; `reportFullChars` records the real
+        # length. Keep this equal to `DEFAULTS.reportKeepChars` (300): a larger
+        # value here silently re-inflates the ledger for patch-installed
+        # profiles, because the patch wins over the default.
+        reportKeepChars: 300
+        # How many older versions `task.history` keeps after a re-record.
+        taskHistoryKeep: 5
+        # Below this many characters a report is flagged `thin: true`.
+        minReportChars: 400
+
+        # --- liveness ---
+        # A dispatched task with no report for this long shows up in
+        # `stale_ids`. It is only a hint: check list_agents before retrying.
+        staleMinutes: 120
+        # Warn in loop_collect / loop_plan when a round runs longer than this.
+        # 0 disables the warning.
+        budgetMinutes: 0
+        # Retry attempts allowed per task before loop_retry reports `exhausted`.
+        maxRetries: 2
+
+        # --- context handed to subagents ---
+        # 'memo' = user's last choice + one line per task from the last three
+        # rounds + artifact paths + the digest file path. 'full' = the round
+        # digest verbatim.
+        contextMode: 'memo'
+        # Re-use a task's previous agent for retries (resume_args) instead of
+        # spawning a fresh one.
+        resumeAgents: true
+
+        # --- task folder ---
+        # Root for loop folders. Empty = `<cwd>/.orchestrator-loop/`.
+        workRoot: ''
+        # Cap on files walked by one tidy pass; exceeding it reports `overflow`
+        # instead of grinding through a huge tree.
+        tidyMaxFiles: 2000

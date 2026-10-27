@@ -1,0 +1,50 @@
+{
+  "name": "dsh-orchestrator-loop",
+  "version": "0.6.0",
+  "description": "Multi-round orchestration loop for DeepSeek Harness: dispatch subagents, record their reports, tidy the task folder into an index, and hand the user 2-8 next-step options. Ships eleven loop_* tools; the dispatcher-only agent preset that mounts them lives in the profile patch.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "USAGE.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "cordis",
+    "plugin",
+    "orchestrator",
+    "loop",
+    "subagent"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0",
+    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "author": "kkinasep-cloud",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkinasep-cloud/dsh-orchestrator-loop.git"
+  },
+  "homepage": "https://github.com/kkinasep-cloud/dsh-orchestrator-loop#readme",
+  "bugs": {
+    "url": "https://github.com/kkinasep-cloud/dsh-orchestrator-loop/issues"
+  }
+}
