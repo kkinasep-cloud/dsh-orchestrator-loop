@@ -126,10 +126,12 @@ cp -a _bak/src-20261027/*.js src/
 sha256sum -c _bak/src-20261027/SHA256SUMS.txt
 ```
 
+> 公开仓库**不含** `_bak/`（含真实台账副本，已在 `.gitignore` 排除）。从 GitHub 安装的用户没有这份回滚基线，请改用 `git checkout <你上次部署的 commit>` 或 `git reset --hard <旧 tag>`；`_bak/src-20261027/` 只存在于开发者本机。
+
 单条回滚方法见上文「破坏性变更」各项末尾。**R7 与 R9 都是可回滚项**：R9 的回执语义只需改 `src/index.js:440-441` 一行（后端的 `digest` / `digest_file` / `task_lines` 字段都保留在返回值里）；R7 的写盘策略只需把 `src/store.js:110-111` 换回 `writeJson(paths.status, buildStatus(ledger))`。
 
 ## [0.5.2] - 2026-10-21
 
 历史版本，未在本文件中逐条追溯（台账纪律与存储瘦身口径见 `_bak/src-20261021`）。
 
-[0.6.0]: https://example.invalid/dsh-orchestrator-loop/compare/0.5.2...0.6.0
+[0.6.0]: https://github.com/kkinasep-cloud/dsh-orchestrator-loop/releases/tag/v0.6.0
